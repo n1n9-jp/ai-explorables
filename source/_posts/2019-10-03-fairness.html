@@ -19,9 +19,12 @@ permalink: /measuring-fairness/
 template: post.html
 
 title: Considering Model Fairness
-title: Measuring Fairness 
-summary: There are multiple ways to measure accuracy. No matter how we build our model, accuracy across these measures will vary when applied to different groups of people.
-summaryalt: There are multiple ways to assess machine learning models, such as its overall accuracy. Another important perspective to consider is the fairness of the model with respect to different groups of people or different contexts of use.
+title: Measuring Fairness
+summary: There are multiple ways to measure accuracy. No matter how we build our model, accuracy across these measures
+will vary when applied to different groups of people.
+summaryalt: There are multiple ways to assess machine learning models, such as its overall accuracy. Another important
+perspective to consider is the fairness of the model with respect to different groups of people or different contexts of
+use.
 shareimg: https://pair.withgoogle.com/explorables/images/measuring-fairness.png
 ---
 
@@ -30,181 +33,218 @@ shareimg: https://pair.withgoogle.com/explorables/images/measuring-fairness.png
 <link rel="stylesheet" href="style.css">
 
 <div id='container' class='container-1'>
-<div id='graph'></div>
-<div id='sections'>
+    <div id='graph'></div>
+    <div id='sections'>
 
 
-<div>
-<h1>Measuring Fairness</h1>
+        <div>
+            <h1>公正さを測る</h1>
 
-<p>How do you make sure a model works equally well for different groups of people? It turns out that in many situations, this is harder than you might think.
+            <p>どのようにすれば、モデルが異なるグループの人々にも等しく機能することを確認できるでしょうか？ 多くの状況で、これは思っている以上に難しいことがわかりました。
 
-<p>The problem is that there are different ways to measure the accuracy of a model, and often it's mathematically impossible for them all to be equal across groups.
+                <p>問題は、モデルの精度を測定するさまざまな方法があり、すべてのグループにとってモデルの精度を等しくすることは数学的に不可能であることが多いです。
 
-<p>We'll illustrate how this happens by creating a (fake) medical model to screen these people for a disease.
+                    <p>私たちは（偽の）医療モデルを作成し、これらの人びとに病気のスクリーニングを行うことで、どのようにしてこれが起こるかを説明します。
+
+
+        </div>
+
+
+        <div>
+            <h3>グラウンド・トゥルース</h3>
+
+            <p>この中の約半数の人が実際に発症しています <wee class='sick'>a</wee>。残りの半数は発症していません <wee class='well'>b</wee>。
+        </div>
+
+
+        <div>
+            <h3>モデルの予測</h3>
+
+            <p>完璧な世界では、病気の人だけが <bg class='sick'>病気で陽性と判定され</bg> 健康な人は <bg>陰性と判定されます</bg>。
+        </div>
+
+
+        <div>
+            <h3>モデルの間違い</h3>
+
+            <p>しかし、モデルやテストは完璧ではありません。
+
+                <p>モデルは間違いを犯して、病気の人を健康な人とマークしてしまうかもしれません <wee class='sick bg-well'>c</wee>。
+
+                    <p>またはその逆に、健康な人を病気の人とマークしてしまうかもしれません <wee class='well bg-sick'>f</wee>.
+        </div>
+
+
+        <div>
+            <h3>病気を見逃すな...</h3>
+
+            <p>単純なフォローアップ・テストがある場合は、モデルが近いケースをアグレッシブに呼び出すようにして、病気を見逃すことはめったにありません。
+
+                <p><b>検査で陽性 <wee class='sick bg-sick'>g</wee> となった病気の人の割合 <wee class='sick'>a</wee></b>を測定することで数値化できます。
+
+                    <div class='mini' sex='all' type='fp'></div>
+        </div>
+
+
+        <div>
+            <h3>...それともオーバーコールを避ける？</h3>
+
+            <p>一方、二次検査がなかったり、供給量が限られている薬を使う治療であれば、<b>
+                    <bg class='sick'>検査陽性者</bg>のうち、実際に病気になっている人 <wee class='sick bg-sick'>g</wee> の割合
+                </b>の方が気になるかもしれませんね。
+
+
+                <div class='mini' sex='all' type='calibration'></div>
+
+                <p>モデル最適化におけるこれらの問題やトレードオフは新しいものではありませんが、病気の診断をどのように積極的に行うかを正確に微調整できるようになったときに、これらの問題に焦点が当てられるようになりました。
+
+                    <div class='slider threshold'></div>
+
+                    <i id='adjust-text'> 病気の診断にどれだけアグレッシブなモデルかを調整してみる</i>
+        </div>
+
+
+        <div>
+            <h3>サブグループ分析</h3>
+
+            <p>モデルが異なるグループを公平に扱っているかどうかを確認すると、事態はさらに複雑になります。<a class='footstart'>¹</a>
+
+                <p>これらの指標間のトレードオフの観点から決定したものは何であれ、異なるグループの人々の間でほぼ均等になるようにしたいものです。
+
+                    <p>資源を均等に配分しようとしているのであれば、モデルが大人よりも子供について多くのケースを見逃してしまうのは良くありません！<a class='footstart'>²</a>
+        </div>
+
+
+        <div>
+            <h3>基準率</h3>
+
+            <p>よく見てみると、この病気は子どもに多いことがわかります。つまり、集団によって病気の「基準率」が違うのです。
+
+                <p>基準率が違うということは、この状況を驚くほど厄介なものにしています。一つには、病気の大人と病気の子供の割合が同じであっても、検査陽性の大人は検査陽性の子供よりも病気にかかる可能性が低いということです。
+        </div>
+
+
+        <div>
+            <h3>不均衡な指標</h3>
+
+            <p>なぜ、子供と大人の診断に格差があるのでしょうか？健康な成人の比率が高いため、検査でミスをすると、健康な子供よりも健康な成人が「陽性」とマークされます（陰性のミスも同様）。
+
+                <div class='mini' sex='female' type='calibration'></div><br>
+                <div class='mini' sex='male' type='calibration'></div>
+
+                <p>これを修正するために、モデルに年齢を考慮させることを考えてみます。
+
+                    <div class='slider threshold_f'></div>
+                    <div style='height: 10px'></div>
+                    <div class='slider threshold_m'></div>
+
+                    <div class='gated'>
+                        <div id='default'><br><i>スライダーを調整して、モデルグレードの大人が子供よりもアグレッシブではないようにします。</i></div>
+
+                        <div id='hidden'>
+                            <p>これにより、1つの指標を調整できます。しかし、現在この病気にかかっている成人は、それと診断される可能性が低くなってしまいます。
+
+                                <div class='mini' sex='female' type='fp'></div>
+                                <br>
+                                <div class='mini' sex='male' type='fp'></div>
+
+                                <p>スライダーをどのように動かしても、両方の指標を一度に公平にすることはできません。これは、基準率が異なる場合にはいつでも避けられないことであり、検査は完璧ではないことがわかります。
+
+                                    <p>公平性を数学的に定義する方法は複数あります。通常、それらすべてを満たすことはできません。<a class='footstart'>³</a>
+                        </div>
+                    </div>
+
+
+        </div>
+    </div>
+</div>
 </div>
 
+<h3>結論</h3>
 
-<div>
-<h3>Ground Truth</h3>
+<p>ありがたいことに、あなたが満たすことを選択した公平性の概念は、モデルのコンテキストに依存します。したがって、公平性のすべての定義を満たすことは不可能かもしれませんが、ユースケースに適した公平性の概念に集中できます。
 
-<p>About half of these people actually have the disease <wee class='sick'>a</wee>; half of them don't <wee class='well'>b</wee>.
-</div>
+    <p>すべての次元に沿った公平性が不可能であるとしても、バイアスのチェックを止めるべきではありません。 The <a href='../hidden-bias/'>Hidden Bias explorable</a>
+        は、人間のバイアスがMLモデルにフィードできるさまざまな方法の概要を示しています。
 
+        <h3>追加の読み物</h3>
 
-<div>
-<h3>Model Predictions</h3>
+        <p>文脈によっては、異なる集団に異なるしきい値を設定することは受け入れられないかもしれません。<a
+                href='https://www.technologyreview.com/s/613508/ai-fairer-than-judge-criminal-risk-assessment-algorithm/'>Can
+                you make AI fairer than a judge?</a>では、人々を刑務所に送ることができるアルゴリズムを探っています。
 
-<p>In a perfect world, only sick people would <bg class='sick'>test positive for the disease</bg> and only healthy people would <bg>test negative</bg>. 
-</div>
+            <p>アルゴリズムが公平であるかどうかを判断するために使用可能な指標はたくさんあります。 <a
+                    href='https://research.google.com/bigpicture/attacking-discrimination-in-ml/'>Attacking
+                    discrimination with smarter machine learning</a> ではそれらのいくつかがどのように機能するかを示しています。<a
+                    href='https://pair-code.github.io/what-if-tool/'>What-If Tool</a> と合わせて <a
+                    href='https://ai.googleblog.com/2019/12/fairness-indicators-scalable.html'>Fairness Indicators</a>
+                やその他の <a href='https://www.youtube.com/watch?v=6CwzDoE8J4M'>fairness tools</a>を用いたり、一般的に使用されている<a
+                    href='https://ai.googleblog.com/2020/02/setting-fairness-goals-with-tensorflow.html'>公平性ある指標</a>に対して自分のモデルをテストすることができます。
 
+                <p></p>機械学習の専門家は、「リコール」のような言葉を使って、陽性反応が出た病気の人の割合を説明しています。<a
+                    href='https://pair.withgoogle.com/chapter/glossary/'>PAIRガイドブックの用語集</a>
+                をチェックして、モデルを構築している人たちとの会話の仕方を学びましょう。
 
-<div>
-<h3>Model Mistakes</h3>
+                <h3>Appendix</h3>
 
-<p>But models and tests aren't perfect.
+                <p><a class='footend'>¹</a>
+                    このエッセイでは、非常にアカデミックで数学的な公正さの基準を使用していますが、口語的な公正さの意味に含まれているかもしれないすべてを<a
+                        href='https://arxiv.org/pdf/1909.11869.pdf'>網羅</a>しているわけではありません。ここでのアルゴリズムの技術的な記述と、アルゴリズムが展開される社会的な文脈との間には<a
+                        href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3265913'>ギャップ</a>があります。
 
-<p>The model might make a mistake and mark a sick person as healthy <wee class='sick bg-well'>c</wee>. 
+                    <p><a class='footend'>²</a>
+                        時には、異なる集団における異なるエラーモードをより気にすることもあるでしょう。もし子供の治療がリスクの高いものであるならば、診断に積極的ではないモデルであってほしいと思うでしょう。
 
-<p>Or the opposite: marking a healthy person as sick <wee class='well bg-sick'>f</wee>.
-</div>
+                        <p><a
+                                class='footend'>³</a>上記の例では、モデルが病気である可能性の高さに基づいて人々をソートし、スコア化していると仮定しています。両方のグループでの過小診断と過大診断のモデルの正確な率を完全にコントロールすることで、これまでに説明した両方のメトリクスを揃えることが実際に可能です。以下のモデルを微調整して、両方が揃うようにしてみてください。
 
+                            <p>3つ目の指標である<b></b>検査陰性<wee class='well bg-well'>e</wee>の健康な人<wee class='well'>a</wee></b>
+                                の割合を追加すると、完全な公平性は不可能になります。病気の基本率が両方の集団で同じでない限り、なぜ3つの指標が揃わないのかわかりますか？
 
-<div><h3>Never Miss the Disease...</h3>
+                                <div id='big-matrix'></div>
 
-<p>If there's a simple follow-up test, we could have the model aggressively call close cases so it rarely misses the disease.
+                                <div id='instructions'><i>モデルの精度を調整するためには <sl>⁠—</sl> をドラッグしてください。<br />
+                                        病気の発生を調整するためには <sl>⁠|</sl> をドラッグしてください。</i></div>
+                                <div id='metrics'></div>
 
-<p>We can quantify this by measuring the <b>percentage of sick people <wee class='sick'>a</wee> who test positive <wee class='sick bg-sick'>g</wee></b>. 
+                                <h3>Credits</h3>
 
-<div class='mini' sex='all' type='fp'></div>
-</div>
+                                <p>Adam Pearce // May 2020
 
+                                    <p>Thanks to Carey Radebaugh, Dan Nanas, David Weinberger, Emily Denton,
+                                        Emily Reif, Fernanda Viégas, Hal Abelson, James Wexler, Kristen Olson,
+                                        Lucas Dixon, Mahima Pushkarna, Martin Wattenberg, Michael Terry, Rebecca
+                                        Salois, Timnit Gebru, Tulsee Doshi, Yannick Assogba, Yoni Halpern, Zan
+                                        Armstrong, and my other colleagues at Google for their help with this
+                                        piece.
 
-<div>
-<h3>...Or Avoid Overcalling?</h3>
+                                        <p>日本語訳：<a href="https://visualizing.jp/">Visualizing.JP</a> / Translation to
+                                            Japanese: <a href="https://visualizing.jp/"></a>Visualizing.JP</a>
 
-<p>On the other hand, if there isn't a secondary test, or the treatment uses a drug with a limited supply, we might care more about the <b>percentage of people with <bg class='sick'>positive tests</bg> who are actually sick <wee class='sick bg-sick'>g</wee> </b>. 
+                                            <p>Original contents in English available at: <a
+                                                    href="https://pair.withgoogle.com/explorables/measuring-fairness/">here</a>.
 
-<div class='mini' sex='all' type='calibration'></div>
+                                                <p>Silhouettes from <a
+                                                        href='https://github.com/propublica/weepeople'>ProPublica's Wee
+                                                        People</a>.
 
-<p>These issues and trade-offs in model optimization aren't new, but they're brought into focus when we have the ability to fine-tune exactly how aggressively disease is diagnosed.
 
-<div class='slider threshold'></div>
 
-<i id='adjust-text'> Try adjusting how aggressive the model is in diagnosing the disease</i>
-</div> 
+                                                    <script src='../third_party/seedrandom.min.js'></script>
+                                                    <script src='../third_party/d3_.js'></script>
+                                                    <script src='../third_party/swoopy-drag.js'></script>
+                                                    <script src='../third_party/topojson-server.js'></script>
+                                                    <script src='../third_party/topojson-client.js'></script>
+                                                    <script src='../third_party/misc.js'></script>
+                                                    <script src='annotations.js'></script>
 
+                                                    <script src='students.js'></script>
+                                                    <script src='sel.js'></script>
+                                                    <script src='slider.js'></script>
+                                                    <script src='mini.js'></script>
+                                                    <script src='slides.js'></script>
+                                                    <script src='gs.js'></script>
+                                                    <script src='init.js'></script>
 
-<div>
-<h3>Subgroup Analysis</h3>
-
-<p>Things get even more complicated when we check if the model treats different groups fairly.<a class='footstart'>¹</a>
-
-<p>Whatever we decide on in terms of trade-offs between these metrics, we'd probably like them to be roughly even across different groups of people.
-
-<p>If we're trying to evenly allocate resources, having the model miss more cases in children than adults would be bad! <a class='footstart'>²</a>
-</div>
-
-
-<div>
-<h3>Base Rates</h3>
-
-<p>If you look carefully, you'll see that the disease is more prevalent in children. That is, the "base rate" of the disease is different across groups.
-
-<p>The fact that the base rates are different makes the situation surprisingly tricky. For one thing, even though the test catches the same percentage of sick adults and sick children, an adult who tests positive is less likely to have the disease than a child who tests positive.
-</div>
-
-
-<div>
-<h3>Imbalanced Metrics</h3>
-
-<p>Why is there a disparity in diagnosing between children and adults? There is a higher proportion of well adults, so mistakes in the test will cause more well adults to be marked "positive" than well children (and similarly with mistaken negatives).
-
-<div class='mini' sex='female' type='calibration'></div><br>
-<div class='mini' sex='male' type='calibration'></div>
-
-<p>To fix this, we could have the model take age into account. 
-
-<div class='slider threshold_f'></div>
-<div style='height: 10px'></div>
-<div class='slider threshold_m'></div>
-
-<div class='gated'>
-<div id='default'><br><i>Try adjusting the slider to make the model grade adults less aggressively than children.</i></div>
-
-<div id='hidden'>
-<p>This allows us to align one metric. But now adults who have the disease are less likely to be diagnosed with it! 
-
-<div class='mini' sex='female' type='fp'></div>
-<br>
-<div class='mini' sex='male' type='fp'></div>
-
-<p>No matter how you move the sliders, you won't be able to make both metrics fair at once. It turns out this is inevitable any time the base rates are different, and the test isn't perfect.
-
-<p>There are multiple ways to define fairness mathematically. It usually isn't possible to satisfy all of them.<a class='footstart'>³</a> 
-</div>
-</div>
-
-
-</div>
-</div> 
-</div>
-</div>
-
-<h3>Conclusion</h3>
-
-<p>Thankfully, the notion of fairness you choose to satisfy will depend on the context of your model, so while it may not be possible to satisfy every definition of fairness, you can focus on the notions of fairness that make sense for your use case. 
-
-<p>Even if fairness along every dimension isn't possible, we shouldn't stop checking for bias. The <a href='../hidden-bias/'>Hidden Bias explorable</a> outlines different ways human bias can feed into an ML model.
-
-<h3>More Reading</h3>
-
-<p>In some contexts, setting different thresholds for different populations might not be acceptable. <a href='https://www.technologyreview.com/s/613508/ai-fairer-than-judge-criminal-risk-assessment-algorithm/'>Can you make AI fairer than a judge?</a> explores an algorithm that can send people to jail. 
-
-<p>There are lots of different metrics you might use to determine if an algorithm is fair. <a href='https://research.google.com/bigpicture/attacking-discrimination-in-ml/'>Attacking discrimination with smarter machine learning</a> shows how several of them work. Using <a href='https://ai.googleblog.com/2019/12/fairness-indicators-scalable.html'>Fairness Indicators</a> in conjunction with the <a href='https://pair-code.github.io/what-if-tool/'>What-If Tool</a> and other <a href='https://www.youtube.com/watch?v=6CwzDoE8J4M'>fairness tools</a>, you can test your own model against commonly used <a href='https://ai.googleblog.com/2020/02/setting-fairness-goals-with-tensorflow.html'>fairness metrics</a>.
-
-<p>Machine learning practitioners use words like “recall” to describe the percentage of sick people who test positive. Checkout the <a href='https://pair.withgoogle.com/chapter/glossary/'>PAIR Guidebook Glossary</a> to learn how to learn how to talk to the people building the models. 
-
-<h3>Appendix</h3>
-
-<p><a class='footend'>¹</a> This essay uses very academic, mathematical standards for fairness that don't <a href='https://arxiv.org/pdf/1909.11869.pdf'>encompass</a> everything we might include in the colloquial meaning of fairness. There's a <a href='https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3265913'>gap</> between the technical descriptions of algorithms here and the social context that they're deployed in.
-
-<p><a class='footend'>²</a> Sometimes we might care more about different error modes in different populations. If treatment is riskier for children, we'd probably want the model to be less aggressive in diagnosing. 
-
-<p><a class='footend'>³</a>The above example assumes the model sorts and scores people based on how likely it is that they are sick. With complete control over the model's exact rate of under- and over-diagnosing in both groups, it's actually possible to align both of the metrics we've discussed so far. Try tweaking the model below to get both of them to line up.
-
-<p>Adding a third metric, <b>the percentage of well people <wee class='well'>a</wee> who test negative <wee class='well bg-well'>e</wee></b>, makes perfect fairness impossible. Can you see why all three metrics won't align unless the base rate of the disease is the same in both populations?
-
-<div id='big-matrix'></div>
-
-<div id='instructions'><i>Drag <sl>⁠—</sl> to adjust model accuracy and <sl>⁠|</sl> to adjust the occurrence of disease</i></div>
-<div id='metrics'></div>
-
-<h3>Credits</h3>
-
-<p>Adam Pearce // May 2020
-
-<p>Thanks to Carey Radebaugh, Dan Nanas, David Weinberger, Emily Denton, Emily Reif, Fernanda Viégas, Hal Abelson, James Wexler, Kristen Olson, Lucas Dixon, Mahima Pushkarna, Martin Wattenberg, Michael Terry, Rebecca Salois, Timnit Gebru, Tulsee Doshi, Yannick Assogba, Yoni Halpern, Zan Armstrong, and my other colleagues at Google for their help with this piece.
-
-<p>Silhouettes from <a href='https://github.com/propublica/weepeople'>ProPublica's Wee People</a>.
-
-
-
-<script src='../third_party/seedrandom.min.js'></script>
-<script src='../third_party/d3_.js'></script>
-<script src='../third_party/swoopy-drag.js'></script>
-<script src='../third_party/topojson-server.js'></script>
-<script src='../third_party/topojson-client.js'></script>
-<script src='../third_party/misc.js'></script>
-<script src='annotations.js'></script>
-
-<script src='students.js'></script>
-<script src='sel.js'></script>
-<script src='slider.js'></script>
-<script src='mini.js'></script>
-<script src='slides.js'></script>
-<script src='gs.js'></script>
-<script src='init.js'></script>
-
-<link rel="stylesheet" href="../base-rate/style.css">
-<script src='../base-rate/script.js'></script>
+                                                    <link rel="stylesheet" href="../base-rate/style.css">
+                                                    <script src='../base-rate/script.js'></script>

@@ -18,12 +18,13 @@ limitations under the License.
 <!DOCTYPE html>
 
 <html>
+
 <head>
-	<meta charset="utf-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <script>
-    !(function(){
+    !(function () {
       var url = window.location.href
       if (url.slice(-1) != '/' && !url.includes('.html')) window.location = url + '/'
     })()
@@ -33,41 +34,49 @@ limitations under the License.
   <meta property="og:title" content="${d.title}">
   <meta property="og:url" content="https://pair.withgoogle.com/explorables${d.permalink}">
 
-  ${d.socialsummary || d.summary ? `<meta name="og:description" content="${d.socialsummary || d.summary}">`  : ''}
-  ${d.shareimg ? `<meta property="og:image" content="${d.shareimg}">`  : ''}
-  ${d.shareimg ? `<meta name="twitter:card" content="summary_large_image">` : ''}
-  
-	<link rel="stylesheet" type="text/css" href="../style.css">
+  ${d.socialsummary || d.summary ? `
+  <meta name="og:description" content="${d.socialsummary || d.summary}">` : ''}
+  ${d.shareimg ? `
+  <meta property="og:image" content="${d.shareimg}">` : ''}
+  ${d.shareimg ? `
+  <meta name="twitter:card" content="summary_large_image">` : ''}
 
-  <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,500,700|Roboto:700,500,300' rel='stylesheet' type='text/css'>  
+  <link rel="stylesheet" type="text/css" href="../style.css">
+
+  <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,500,700|Roboto:700,500,300' rel='stylesheet'
+    type='text/css'>
   <link href="https://fonts.googleapis.com/css?family=Google+Sans:400,500,700" rel="stylesheet">
 
-	<meta name="viewport" content="width=device-width">
+  <meta name="viewport" content="width=device-width">
 </head>
+
 <body>
   <div class='header'>
-    <div class='header-left'>
+    <!-- <div class='header-left'>
       <a href='https://pair.withgoogle.com/'>
         <img src='../images/pair-logo.svg' style='width: 100px'></img>
       </a>
-      <a href='../'>Explorables</a> 
-    </div>
+      <a href='../'>Explorables</a>
+    </div> -->
   </div>
-  
+
   <h1 class='headline'>${d.title}</h1>
   ${d.summary ? `<div class="post-summary">${d.summary}</div>` : ''}
   ${d.html}
 </body>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-138505774-1"></script>
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138505774-1"></script>
 <script>
-  if (window.location.origin === 'https://pair.withgoogle.com'){
+  if (window.location.origin === 'https://pair.withgoogle.com') {
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
     gtag('js', new Date());
     gtag('config', 'UA-138505774-1');
   }
-</script>
+</script> -->
 
 
 </html>

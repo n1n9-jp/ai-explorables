@@ -14,59 +14,98 @@ limitations under the License.
 ==============================================================================*/
 
 
-window.makeSel = function(){
-  var s = c.width/(nCols -2) -1
+window.makeSel = function () {
+  var s = c.width / (nCols - 2) - 1
 
   var personSel = c.svg.appendMany('g', students)
   var rectSel = personSel.append('rect')
     .at({
       height: s,
       width: s,
-      x: -s/2,
-      y: -s/2,
+      x: -s / 2,
+      y: -s / 2,
       // fillOpacity: .2
     })
 
   var textSel = personSel.append('text.weepeople')
     .text(d => d.letter)
-    .at({fontSize: d => d.isMale ? 26 : 34, dy: '.33em', textAnchor: 'middle'})
-    .st({stroke: d => d.isSick ? dcolors.sick : dcolors.well})
+    .at({
+      fontSize: d => d.isMale ? 26 : 34,
+      dy: '.33em',
+      textAnchor: 'middle'
+    })
+    .st({
+      stroke: d => d.isSick ? dcolors.sick : dcolors.well
+    })
 
   addSwoop(c)
 
   var botAxis = c.svg.append('g').translate(c.width + 150, 1)
   var truthAxis = botAxis.append('g.axis').translate([0, 0])
 
-  truthAxis.append('text').text('Truth')
-    .at({textAnchor: 'middle', fontWeight: 500, x: s*2.65})
+  truthAxis.append('text').text('実際')
+    .at({
+      textAnchor: 'middle',
+      fontWeight: 500,
+      x: s * 2.65
+    })
 
   truthAxis.append('g').translate([45, 22])
-    .append('text').text('Sick').parent()
+    .append('text').text('病気').parent()
     .append('text.weepeople').text('k')
-      .at({fontSize: 34, x: 22, y: 5})
-      .st({fill: colors.sick})
+    .at({
+      fontSize: 34,
+      x: 22,
+      y: 5
+    })
+    .st({
+      fill: colors.sick
+    })
 
   truthAxis.append('g').translate([95, 22])
-    .append('text').text('Well').parent()
+    .append('text').text('健康').parent()
     .append('text.weepeople').text('d')
-      .at({fontSize: 34, fill: colors.well, x: 22, y: 5})
-      .st({fill: colors.well})
+    .at({
+      fontSize: 34,
+      fill: colors.well,
+      x: 22,
+      y: 5
+    })
+    .st({
+      fill: colors.well
+    })
 
 
   var mlAxis = botAxis.append('g.axis').translate([220, 0])
 
-  mlAxis.append('text').text('ML Prediction')
-    .at({textAnchor: 'middle', fontWeight: 500, x: s*2.8})
+  mlAxis.append('text').text('機械学習の予測')
+    .at({
+      textAnchor: 'middle',
+      fontWeight: 500,
+      x: s * 2.8
+    })
 
   mlAxis.append('g').translate([35, 22])
-    .append('text').text('Sick').parent()
+    .append('text').text('病気').parent()
     .append('rect')
-      .at({width: s*.7, height: s*.7, fill: lcolors.sick, x: 28, y: -17})
+    .at({
+      width: s * .7,
+      height: s * .7,
+      fill: lcolors.sick,
+      x: 28,
+      y: -17
+    })
 
   mlAxis.append('g').translate([100, 22])
-    .append('text').text('Well').parent()
+    .append('text').text('健康').parent()
     .append('rect')
-      .at({width: s*.7, height: s*.7, fill: lcolors.well, x: 28, y: -17})
+    .at({
+      width: s * .7,
+      height: s * .7,
+      fill: lcolors.well,
+      x: 28,
+      y: -17
+    })
 
 
 
@@ -96,14 +135,20 @@ window.makeSel = function(){
 
 
   var sexAxis = c.svg.append('g.axis')
- 
-  sexAxis.append('text').st({fontWeight: 500, fill: ''})
-    .translate([-15, -30])
-    .text('Adults')
 
-  sexAxis.append('text').st({fontWeight: 500, fill: ''})
+  sexAxis.append('text').st({
+      fontWeight: 500,
+      fill: ''
+    })
+    .translate([-15, -30])
+    .text('大人たち')
+
+  sexAxis.append('text').st({
+      fontWeight: 500,
+      fill: ''
+    })
     .translate([-15, -30 + students.maleOffsetPx])
-    .text('Children')
+    .text('子供たち')
 
 
   var brAxis = c.svg.append('g.axis')
@@ -114,29 +159,45 @@ window.makeSel = function(){
     .at({
       stroke: colors.sick,
       fill: 'none',
-      d: ['M -3 -3 v', -cpx, 'h', students.fSickCols*students.colWidth, 'v', cpx].join('')
+      d: ['M -3 -3 v', -cpx, 'h', students.fSickCols * students.colWidth, 'v', cpx].join('')
     })
 
   brAxis.append('path')
-    .translate([-15, -20  + students.maleOffsetPx])
+    .translate([-15, -20 + students.maleOffsetPx])
     .at({
       stroke: colors.sick,
       fill: 'none',
-      d: ['M -3 -3 v', -cpx, 'h', students.mSickCols*students.colWidth, 'v', cpx].join('')
+      d: ['M -3 -3 v', -cpx, 'h', students.mSickCols * students.colWidth, 'v', cpx].join('')
     })
 
-  brAxis.append('text').st({fontWeight: 500, fill: colors.sick})
+  brAxis.append('text').st({
+      fontWeight: 500,
+      fill: colors.sick
+    })
     .translate([-15, -30])
-    .text('Sick Adults')
+    .text('病気の大人たち')
 
-  brAxis.append('text').st({fontWeight: 500, fill: colors.sick})
+  brAxis.append('text').st({
+      fontWeight: 500,
+      fill: colors.sick
+    })
     .translate([-15, -30 + students.maleOffsetPx])
-    .text('Sick Children')
+    .text('病気の子供たち')
 
 
 
 
-  return {personSel, textSel, rectSel, fpAxis, sexAxis, brAxis, truthAxis, mlAxis, botAxis}
+  return {
+    personSel,
+    textSel,
+    rectSel,
+    fpAxis,
+    sexAxis,
+    brAxis,
+    truthAxis,
+    mlAxis,
+    botAxis
+  }
 }
 
 

@@ -1,10 +1,9 @@
-window.annotations = [
-  {
+window.annotations = [{
     "slide": 0,
     "x": 1.77,
     "y": 3.17,
     "path": "M -3,-59 A 31.215 31.215 0 1 0 -10,2",
-    "text": "Joshua had a high school GPA of 3.2 and 1.8 in college",
+    "text": "ジョシュアは高校のGPAが3.2、大学では1.8でした。",
     "textOffset": [
       -1,
       -48
@@ -15,7 +14,7 @@ window.annotations = [
     "x": 2.93,
     "y": 2.08,
     "path": "M 56,61 A 45.102 45.102 0 0 0 19.000001907348633,1.0000003576278687",
-    "text": "Abigail has a 2.1 in high school and 2.9 in college",
+    "text": "アビゲイルは高校のGPAが2.1、大学では2.9でした。",
     "textOffset": [
       -5,
       85
@@ -27,7 +26,7 @@ window.annotations = [
     "x": 3.7,
     "y": 2,
     "path": "M 1,41 A 209.709 209.709 0 0 1 -310,76",
-    "text": "Most students have a higher GPA in high school",
+    "text": "ほとんどの学生が高校のときのGPAのほうが高いです。",
     "textOffset": [
       -69,
       11
@@ -39,7 +38,7 @@ window.annotations = [
     "x": 1,
     "y": 4,
     "path": "M 0 0",
-    "text": "A well adjusted model will usually over predict about half the students' grades...",
+    "text": "よく調整されたモデルは、通常、学生の成績の約半分以上をこう予測します...",
     "textOffset": [
       25,
       50
@@ -51,7 +50,7 @@ window.annotations = [
     "x": 4,
     "y": 1,
     "path": "M 0 0",
-    "text": "...and under predict the other half",
+    "text": "...残り半分をこう予測します",
     "textOffset": [
       -109,
       -51
@@ -63,8 +62,8 @@ window.annotations = [
     "x": 2.58,
     "y": 2,
     "path": "M 54,34 A 29.707 29.707 0 0 0 11,-6",
-    "text": "The model predicted both Lucas and Mia would get a 2.0, but she ended up with a higher GPA",
-    "html": "The model predicted both <span class='highlight male'>Lucas</span> and <span class='highlight female'>Mia</span> would get a 2.0, but she ended up with a higher GPA",
+    "text": "モデルはルーカスとミアの両方が2.0を取得すると予測していましたが、彼女は最終的に高いGPAを取得しました。",
+    "html": "モデルは<span class='highlight male'>ルーカス</span>と<span class='highlight female'>ミア</span>の両方が2.0を取得すると予測していましたが、彼女は最終的に高いGPAを取得しました。",
     "textOffset": [
       -22,
       44

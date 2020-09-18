@@ -20,7 +20,7 @@ limitations under the License.
 
 
 
-window.makeSlider = function(){
+window.makeSlider = function () {
 
   var width = 300
   var height = 30
@@ -41,16 +41,16 @@ window.makeSlider = function(){
 
   var gatedSel = d3.select('.gated')
 
-  function makeSetSlider(data, key){
+  function makeSetSlider(data, key) {
     var text = key.split('_')[1]
 
 
     var drag = d3.drag()
-      .on('drag', function(d){
+      .on('drag', function (d) {
         updateThreshold(x.invert(d3.mouse(this)[0]))
         // console.log(d3.event.x)
 
-        if (text && slider.threshold_f && (slider.threshold_f > 0.9042 || slider.threshold_f - slider.threshold_m > .05)){
+        if (text && slider.threshold_f && (slider.threshold_f > 0.9042 || slider.threshold_f - slider.threshold_m > .05)) {
           gatedSel.classed('opened', 1)
           svg.classed('no-blink', 1)
         }
@@ -59,65 +59,99 @@ window.makeSlider = function(){
       })
 
     var svg = d3.select('.slider.' + key).html('')
-      .append('svg').at({width, height})
+      .append('svg').at({
+        width,
+        height
+      })
       .call(drag)
-      .st({cursor: 'pointer'})
+      .st({
+        cursor: 'pointer'
+      })
 
     if (key == 'threshold_m') svg.classed('no-blink', 1)
 
 
 
-    svg.append('rect').at({width, height, fill: lcolors.well})
+    svg.append('rect').at({
+      width,
+      height,
+      fill: lcolors.well
+    })
 
     var rectSel = svg.append('rect.threshold-rect')
-      .at({width, height, fill: lcolors.sick})
+      .at({
+        width,
+        height,
+        fill: lcolors.sick
+      })
 
     var handleSel = svg.append('g.threshold-handle')
     handleSel.append('text.cursor')
       .text('▲')
-      .at({textAnchor: 'middle', fontSize: 10, y: height, dy: '.8em'})
+      .at({
+        textAnchor: 'middle',
+        fontSize: 10,
+        y: height,
+        dy: '.8em'
+      })
     handleSel.append('circle')
-      .at({cy: height, r: 30, fill: 'rgba(0,0,0,0)'})
+      .at({
+        cy: height,
+        r: 30,
+        fill: 'rgba(0,0,0,0)'
+      })
 
-    var labelText = 'Model Aggressiveness _→'
+    var labelText = 'モデルのアグレッシブさ _→'
     var _replacement = !text ? '' : 'On ' + (text == 'f' ? 'Women ' : 'Men ')
 
-    var labelText = '_Model Aggressiveness →'
+    var labelText = '_モデルのアグレッシブさ →'
     var _replacement = !text ? '' : (text == 'f' ? 'Adult ' : 'Adult ')
 
-    var labelText = '_Model Decision Point'
+    var labelText = '_モデル決定ポイント'
     var _replacement = !text ? '' : (text == 'f' ? 'Adult ' : 'Adult ')
 
-    var labelText = 'Model Decision Point_'
+    var labelText = 'モデル決定ポイント_'
     var _replacement = !text ? '' : (text == 'f' ? ' for Adults ' : ' for Children ')
 
-    var labelText = '_ Model Aggressiveness →'
+    var labelText = '_ モデルのアグレッシブさ →'
     var _replacement = !text ? '' : (text == 'f' ? ' Adult ' : 'Child ')
 
 
     svg.append('text.axis').text(labelText.replace('_', _replacement))
-      .at({y: height/2, dy: '.33em', dx: 10})
-      .st({pointerEvents: 'none'})
+      .at({
+        y: height / 2,
+        dy: '.33em',
+        dx: 10
+      })
+      .st({
+        pointerEvents: 'none'
+      })
 
 
 
-    function updateThreshold(threshold, skipDom){
+    function updateThreshold(threshold, skipDom) {
       rv[key] = threshold
       data.forEach(d => d.threshold = threshold)
 
       mini.updateAll()
 
-      rectSel.at({width: x(threshold)})
+      rectSel.at({
+        width: x(threshold)
+      })
       handleSel.translate(x(threshold), 0)
 
       if (skipDom) return
 
-      if (key == 'threshold'){
-        allActiveSel.at({width: x(threshold)})
+      if (key == 'threshold') {
+        allActiveSel.at({
+          width: x(threshold)
+        })
         allHandleSel.translate(x(threshold), 0)
       }
 
-      sel.rectSel.at({fill: d => d.grade > d.threshold ? lcolors.sick : lcolors.well})
+      sel.rectSel.at({
+        fill: d => d.grade > d.threshold ? lcolors.sick : lcolors.well
+      })
       sel.textSel
         .st({
           strokeWidth: d => d.grade > d.threshold == d.isSick ? 0 : .6,

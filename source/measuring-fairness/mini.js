@@ -17,31 +17,47 @@ limitations under the License.
 
 
 
-window.makeMini = function(){
+window.makeMini = function () {
 
   var s = 10
-  var sScale = ([a, b]) => [s*a, s*b]
+  var sScale = ([a, b]) => [s * a, s * b]
 
-  var miniSel = d3.selectAll('.mini').html('').each(addMini).st({overflow: 'visible'})
+  var miniSel = d3.selectAll('.mini').html('').each(addMini).st({
+    overflow: 'visible'
+  })
 
   var cColors = {
-    true:  {true: colors.sick, false: lcolors.sick},
-    false: {true: colors.well, false: lcolors.well}
+    true: {
+      true: colors.sick,
+      false: lcolors.sick
+    },
+    false: {
+      true: colors.well,
+      false: lcolors.well
+    }
   }
   var rColors = {
-    true:  {true: lcolors.sick, false: llcolors.sick},
-    false: {true: lcolors.well, false: llcolors.well}
+    true: {
+      true: lcolors.sick,
+      false: llcolors.sick
+    },
+    false: {
+      true: lcolors.well,
+      false: llcolors.well
+    }
   }
 
 
-  function addMini(){
+  function addMini() {
     var miniSel = d3.select(this)
 
     var type = miniSel.attr('type')
     var sex = miniSel.attr('sex')
     var isAll = sex == 'all'
 
-    miniSel.st({marginBottom: sex == 'male' ? 30 : 0})
+    miniSel.st({
+      marginBottom: sex == 'male' ? 30 : 0
+    })
 
     var data = students
       .filter(d => isAll ? true : sex == 'male' ? d.isMale : !d.isMale)
@@ -49,7 +65,7 @@ window.makeMini = function(){
     var topDatum = {}
     var botDatum = {}
 
-    if (type == 'fp'){
+    if (type == 'fp') {
       topDatum.opacity = d => d.grade > d.threshold && d.isSick
       botDatum.opacity = d => d.isSick
     } else {
@@ -59,50 +75,85 @@ window.makeMini = function(){
 
 
 
-    var top = -s*nCols/2 + 10
+    var top = -s * nCols / 2 + 10
     if (!isAll) top /= 2
     addGrid(miniSel.append('span'), topDatum)
-    miniSel.append('span.equation').text('÷').st({top, fontWeight: '', fontSize: 20})
+    miniSel.append('span.equation').text('÷').st({
+      top,
+      fontWeight: '',
+      fontSize: 20
+    })
     addGrid(miniSel.append('span'), botDatum)
-    miniSel.append('span.equation').text('=').st({top, fontWeight: '', fontSize: 20})
+    miniSel.append('span.equation').text('=').st({
+      top,
+      fontWeight: '',
+      fontSize: 20
+    })
 
-    if (!isAll){
-      var sexStr = sex == 'male' ? 'children' : 'adults'
+    if (!isAll) {
+      var sexStr = sex == 'male' ? '子供' : '大人'
 
-      var coStr = `of ${sexStr} <br>testing positive<br>are sick`
-      var fpStr = `of ${sexStr} <br>who are sick <br>test positive`
-      miniSel.st({position: 'relative'})
+      var coStr = `の${sexStr}の<br>検査陽性者は<br>病気です`
+      var fpStr = `の${sexStr}の<br>病気の人は<br>検査陽性者です`
+      miniSel.st({
+          position: 'relative'
+        })
         .append('div.axis')
-        .st({position: 'absolute', right: -9, textAlign: 'center', width: 95, lineHeight: 14, bottom: -15})
+        .st({
+          position: 'absolute',
+          right: -9,
+          textAlign: 'center',
+          width: 95,
+          lineHeight: 14,
+          bottom: -15
+        })
         .html(type == 'fp' ? fpStr : coStr)
 
     }
-    
-    var percentSel = miniSel.append('span.equation').st({top, marginLeft: 0})
 
-    function update(){
+    var percentSel = miniSel.append('span.equation').st({
+      top,
+      marginLeft: 0
+    })
+
+    function update() {
       topDatum.update()
       botDatum.update()
 
-      var percent = d3.sum(data, topDatum.opacity)/d3.sum(data, botDatum.opacity)
+      var percent = d3.sum(data, topDatum.opacity) / d3.sum(data, botDatum.opacity)
       percentSel.text(d3.format('.0%')(percent))
     }
 
-    miniSel.datum({update}) 
+    miniSel.datum({
+      update
+    })
 
 
-    function addGrid(gridSel, datum){
-      var {opacity} = datum
+    function addGrid(gridSel, datum) {
+      var {
+        opacity
+      } = datum
 
-      var width = s*nCols
-      var height = s*nCols*(isAll ? 1 : .5)
-      var svg = gridSel.append('svg').at({width, height})
+      var width = s * nCols
+      var height = s * nCols * (isAll ? 1 : .5)
+      var svg = gridSel.append('svg').at({
+        width,
+        height
+      })
 
       var callSickSel = svg.append('rect')
-        .at({width, height, fill: lcolors.sick})
+        .at({
+          width,
+          height,
+          fill: lcolors.sick
+        })
 
       var callWellPath = svg.append('path')
-        .at({width, height, fill: lcolors.well})
+        .at({
+          width,
+          height,
+          fill: lcolors.well
+        })
 
 
       var personSel = svg.appendMany('g', data)
@@ -119,15 +170,25 @@ window.makeMini = function(){
 
 
       var circleSel = personSel.append('circle')
-        .at({r: s/4, cx: s/2 - pad/2, cy: s/2 - pad/2, fill: d => d.isSick ? colors.sick : '#777'})
+        .at({
+          r: s / 4,
+          cx: s / 2 - pad / 2,
+          cy: s / 2 - pad / 2,
+          fill: d => d.isSick ? colors.sick : '#777'
+        })
 
-      if (!isAll){
+      if (!isAll) {
         svg.append('path')
           .translate([-1, -5])
-          .at({stroke: colors.sick, d: 'M 0 0 H ' + (sex == 'male' ? 8 : 4)*s})
+          .at({
+            stroke: colors.sick,
+            d: 'M 0 0 H ' + (sex == 'male' ? 8 : 4) * s
+          })
       }
 
-      var geodata = {type: 'FeatureCollection'}
+      var geodata = {
+        type: 'FeatureCollection'
+      }
       geodata.features = data.map(d => {
         var [x, y] = sScale(d.pos[isAll ? 'allIJ' : 'sexGroupIJ'])
         return {
@@ -135,27 +196,45 @@ window.makeMini = function(){
           geometry: {
             type: 'Polygon',
             coordinates: [
-              [[x, y], [x, y + s], [x + s, y + s], [x + s, y], [x, y]]
+              [
+                [x, y],
+                [x, y + s],
+                [x + s, y + s],
+                [x + s, y],
+                [x, y]
+              ]
             ]
           },
-          properties: {d},
+          properties: {
+            d
+          },
         }
       })
 
-      var topology = topojson.topology({boxes: geodata})
+      var topology = topojson.topology({
+        boxes: geodata
+      })
       var geowrap = topojson.feature(topology, topology.objects.boxes)
       var path = d3.geoPath()
 
       var hiddenPath = svg.append('path')
-        .at({stroke: 'none', fill: 'rgba(255,255,255,.6)'})
+        .at({
+          stroke: 'none',
+          fill: 'rgba(255,255,255,.6)'
+        })
         .translate(.5, 1)
 
       var includedPath = svg.append('path')
-        .at({stroke: '#000', fill: 'none'})
+        .at({
+          stroke: '#000',
+          fill: 'none'
+        })
         .translate(.5, 1)
 
 
-      circleSel.at({fill: d => d.isSick ? colors.sick : colors.well})
+      circleSel.at({
+        fill: d => d.isSick ? colors.sick : colors.well
+      })
 
       datum.update = () => {
         // rectSel.at({
@@ -168,30 +247,42 @@ window.makeMini = function(){
         var byType = d3.nestBy(topology.objects.boxes.geometries, d => opacity(d.properties.d))
 
         byType.forEach(type => {
-          var obj = {type: 'GeometryCollection', geometries: type}
+          var obj = {
+            type: 'GeometryCollection',
+            geometries: type
+          }
           var pathStr = path(topojson.mesh(topology, obj, (a, b) => a == b))
 
           var pathSel = type.key == 'true' ? includedPath : hiddenPath
-          pathSel.at({d: pathStr})
+          pathSel.at({
+            d: pathStr
+          })
         })
 
         var sickBoxes = topology.objects.boxes.geometries
           .filter(d => d.properties.d.grade <= d.properties.d.threshold)
-        var obj = {type: 'GeometryCollection', geometries: sickBoxes}
+        var obj = {
+          type: 'GeometryCollection',
+          geometries: sickBoxes
+        }
         var pathStr = path(topojson.mesh(topology, obj, (a, b) => a == b))
-        callWellPath.at({d: pathStr})
+        callWellPath.at({
+          d: pathStr
+        })
       }
     }
-   
+
   }
 
 
 
-  function updateAll(){
+  function updateAll() {
     miniSel.each(d => d.update())
   }
 
-  return {updateAll}
+  return {
+    updateAll
+  }
 }
 
 

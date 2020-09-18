@@ -16,100 +16,126 @@ limitations under the License.
 -->
 ---
 template: post.html
-title: Hidden Bias
-summary: Models trained on real-world data can encode real-world bias. Hiding information about protected classes doesn't always fix things—sometimes it can even hurt.
+title: 隠されたバイアス
+summary: 実世界のデータで訓練されたモデルは，実世界のバイアスを符号化することができます。保護されたクラスに関する情報を隠します。
+doesn't always fix things—sometimes it can even hurt.
 permalink: /hidden-bias/
 shareimg: https://pair.withgoogle.com/explorables/images/hidden-bias.png
 ---
 <link rel="stylesheet" href="style.css">
 
 <div id='container' class='container-1'>
-<div id='graph'></div>
-<div id='sections'>
+    <div id='graph'></div>
+    <div id='sections'>
 
 
-<div>
-<h3>Modeling College GPA</h3>
+        <div>
+            <h3>大学のGPAをモデリングする</h3>
 
-<p>Let's pretend we're college admissions officers trying to predict the GPA students will have in college (in these examples we'll use simulated data).
+            <p>ここでは、大学の入学担当者が学生の大学でのGPAを予測しようとしているとしましょう（この例では、シミュレーションデータを使用します）。
 
-<p>One simple approach: predict that students will have the same GPA in college as they did in high school. 
-</div>
-
-
-<div class='img-slide'>
-<p>This is at best a very rough approximation, and it misses a key feature of this data set: students usually have better grades in high school than in college
-
-<p>We're <img src='over.png'><span class='xhighlight blue'>over-predicting</span> college grades more often then we <img src='over.png'><span class='xhighlight orange'>under-predict.</span>
-</div>
+                <p>簡単な方法としては、大学でも高校時代と同じGPAになると予測します。
+        </div>
 
 
-<div>
-<h3>Predicting with ML</h3>
-<p>If we switched to using a machine learning model and entered these student grades, it would recognize this pattern and adjust the prediction.
-
-<p>The model does this without knowing anything about the real-life context of grading in high school versus college.
-</div>
-
-
-<div>
-<p>Giving the model <span class='highlight blue'>more information</span> about students increases accuracy more...
-</div>
+        <div class='img-slide'>
+            <p>これはせいぜい非常に大雑把な近似値であり、このデータセットの重要な特徴を見逃している。学生は通常、大学よりも高校の方が成績が良いです。
+                <p>私たちは大学の成績を予測を <img src='over.png'><span class='xhighlight blue'>過大</span> に予測しています。
+                    <img src='over.png'><span class='xhighlight orange'>過小</span>ではなく。
+        </div>
 
 
-<div>
-<p>...and more.
-</div>
+        <div>
+            <h3>機械学習によるによる予測</h3>
+            <p>機械学習モデルを使うことに切り替えて、これらの生徒の成績を入力すると、機械学習モデルはこのパターンを認識して予測を調整します。
+
+                <p>このモデルは、高校と大学の成績評価の実生活のコンテクストについて何も知らなくても、このようなことを行います。
+        </div>
 
 
-<div>
-<h3>Models can encode previous bias</h3>
-<p>All of this sensitive information about students is just a long list of numbers to model. 
+        <div>
 
-<p>If a sexist college culture has historically led to lower grades for <span class='f circle'>&nbsp;</span> female students, the model will pick up on that correlation and predict lower grades for women.  
-
-<p>Training on historical data bakes in historical biases. Here the sexist culture has improved, but the model learned from the past correlation and still predicts higher grades for <span class='m circle'>&nbsp;</span> men.
-</div>
-
-<div>
-<h3>Hiding protected classes from the model might not stop discrimination</h3>
-
-<p>Even if we don't tell the model students' genders, it might still score <span class='f circle'>&nbsp;</span> female students poorly.
-
-<p>With detailed enough information about every student, the model can still synthesize a proxy for gender out of other <span class='highlight yellow'>variables.</span>
-</div>
+            <p></p>モデルに学生についての<span class='highlight blue'>より多くの情報</span>を与えることで、より精度が向上します...
 
 
-<div>
-<h3>Including a protected attribute may even <i>decrease</i> discrimination</h3>
-
-<p>Let's look at a simplified model, one only taking into account the recommendation of an alumni interviewer. 
-</div>
+        </div>
 
 
-<div>
-<p>The interviewer is quite accurate, except that they're biased against students with a <span class='l circle'>&nbsp;</span> low household income. 
-
-<p>In our toy model, students' grades don't depend on their income once they're in college. In other words, we have biased inputs and unbiased outcomes—the opposite of the previous example, where the inputs weren't biased, but the toxic culture biased the outcomes. 
-</div>
+        <div>
+            <p>向上します...
+        </div>
 
 
-<div>
-<p>If we also tell the model each student's <span class='highlight blue'>household income</span>, it will naturally correct for the interviewer's overrating of <span class='h circle'>&nbsp;</span> high-income students just like it corrected for the difference between high school and college GPAs. 
+        <div>
+            <h3>モデルは過去のバイアスをコード化してしまいます</h3>
+            <p>学生に関するこのセンシティブな情報はすべて、モデル化するための数字の長いリストにすぎません。
 
-<p>By carefully considering and accounting for bias, we've made the model fairer and more accurate. This isn't always easy to do, especially in circumstances like the historically toxic college culture where unbiased data is limited. 
+                <p>性差別的な大学文化が歴史的に <span class='f circle'>&nbsp;</span>
+                    女子学生の成績低下につながっていた場合、モデルはその相関関係を拾い上げ、女性の成績低下を予測します。
 
-<p>And there are fundamental fairness trade-offs that have to be made. Check out the <a href='../measuring-fairness/'>Measuring Fairness explorable</a> to see how those tradeoffs work.<a href='../measuring-fairness/'><br><img style='width: 100%; max-width: 391px; margin-left: -8px' src='../images/medical-fairness.gif'></a>
+                    <p>歴史的なデータでのトレーニングは、歴史的なバイアスを焼き直します。
+                        ここで性差別文化は改善されたとしても、モデルは過去の相関関係から学び、それでも <span class='m circle'>&nbsp;</span>
+                        男性の成績が上がることを予測します。
+
+        </div>
+
+        <div>
+            <h3>モデルから保護されたクラスを隠しても差別は止まらないかもしれません</h3>
+
+            <p>モデルの学生の性別を教えなくても、<span class='f circle'>&nbsp;</span> 女子学生のスコアは悪くなるかもしれません。
+
+                <p>すべての学生についての十分に詳細な情報があれば、モデルは他の<span class='highlight yellow'>変数</span>から性別の代理を合成することができます。
+
+        </div>
 
 
-<br><br>
+        <div>
+            <h3>保護された属性を含めることは、差別を<i>減らす</i>ことにもなりかねません</h3>
 
-<p>Adam Pearce // May 2020
+            <p>ここでは、同窓生の面接官の推薦のみを考慮した簡易モデルを見てみましょう。
+        </div>
 
-<p>Thanks to Carey Radebaugh, Dan Nanas, David Weinberger, Emily Denton, Emily Reif, Fernanda Viégas, Hal Abelson, James Wexler, Kristen Olson, Lucas Dixon, Mahima Pushkarna, Martin Wattenberg, Michael Terry, Rebecca Salois, Timnit Gebru, Tulsee Doshi, Yannick Assogba, Yoni Halpern, Zan Armstrong, and my other colleagues at Google for their help with this piece.
-</div>
 
-</div>
+        <div>
+            <p><span class='l circle'>&nbsp;</span>世帯年収が低い学生に偏っていることを除けば、インタビュアーはかなり正確です。
+
+                <p>私たちのおもちゃモデルでは、学生の成績は大学に入ってからは収入に左右されません。言い換えれば、偏ったインプットと偏っていないアウトカムがあるということになりますが、インプットは偏っていませんでしたが、有害な文化がアウトカムを偏らせていました。
+        </div>
+
+
+        <div>
+            <p>もしモデルに各学生の<span class='highlight blue'>世帯収入</span>を教えてあげれば、高校と大学のGPAの差を補正したように、面接官が<span
+                    class='h circle'>&nbsp;</span> 高所得学生を過大評価していることを自然に補正してくれます。
+
+                <p>慎重に検討し、バイアスを処理することで、モデルをより公正で正確なものにしました。これは、特に歴史的に有害な大学文化のように、偏りのないデータが限られている状況では、必ずしも容易なことではありません。
+
+                    <p>そして、基本的なフェアネスのトレードオフがあり、それを行わなければなりません。これらのトレードオフがどのように機能するかについては、<a
+                            href='../measuring-fairness/'>Measuring Fairness</a>をご覧ください。
+
+                        <a href='../measuring-fairness/'><br><img
+                                style='width: 100%; max-width: 391px; margin-left: -8px'
+                                src='../images/medical-fairness.gif'></a>
+
+
+                        <br><br>
+
+                        <p>Adam Pearce // May 2020
+
+                            <p>Thanks to Carey Radebaugh, Dan Nanas, David Weinberger, Emily Denton, Emily Reif,
+                                Fernanda Viégas, Hal Abelson, James Wexler, Kristen Olson, Lucas Dixon, Mahima
+                                Pushkarna, Martin Wattenberg, Michael Terry, Rebecca Salois, Timnit Gebru, Tulsee Doshi,
+                                Yannick Assogba, Yoni Halpern, Zan Armstrong, and my other colleagues at Google for
+                                their help with this piece.
+
+                                <p>日本語訳：<a href="https://visualizing.jp/">Visualizing.JP</a> / Translation to
+                                    Japanese: <a href="https://visualizing.jp/"></a>Visualizing.JP</a>
+
+                                    <p>Original contents in English available at: <a
+                                            href="https://pair.withgoogle.com/explorables/hidden-bias/">here</a>.
+
+        </div>
+
+    </div>
 </div>
 <div id='end'></div>
 

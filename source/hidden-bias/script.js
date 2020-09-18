@@ -32,15 +32,21 @@ var sel = d3.select('#graph').html('')
   .append('div')
 
 var extraWidth = d3.clamp(500, innerHeight - 150, innerWidth - 500)
-var scale = extraWidth/500
+var scale = extraWidth / 500
 scale = 1
-sel.st({transform: `scale(${scale})`, transformOrigin: '0% 0%'})
+sel.st({
+  transform: `scale(${scale})`,
+  transformOrigin: '0% 0%'
+})
 
 var c = d3.conventions({
   sel,
   totalWidth,
   totalHeight: totalWidth,
-  margin: {left: 25, right: 7},
+  margin: {
+    left: 25,
+    right: 7
+  },
   layers: 'sd',
 })
 var divSel = c.layers[1]
@@ -52,9 +58,13 @@ c.xAxis.ticks(3).tickFormat(d3.format('.1f'))
 c.yAxis.ticks(3).tickFormat(d3.format('.1f'))
 d3.drawAxis(c)
 
-var axis2Sel= c.svg.append('g.axis').append('line')
+var axis2Sel = c.svg.append('g.axis').append('line')
   .translate(Math.round(c.y(2)) + .5, 1)
-  .at({x2: c.width, stroke: '#000', opacity: 0})
+  .at({
+    x2: c.width,
+    stroke: '#000',
+    opacity: 0
+  })
 
 var meanGPADiff = .6
 
@@ -74,32 +84,32 @@ var students = d3.range(150).map((d, index) => {
   var rand = d3.randomUniform.source(seed)(0, 1)
 
   var isMale = rand() < .5
-  var name = names[isMale ? 'm' : 'f'][Math.floor(d/2)]
+  var name = names[isMale ? 'm' : 'f'][Math.floor(d / 2)]
   var lastName = names.last[d]
-  var maleOffset = rand()*(isMale ? 1 : -1)*.6
+  var maleOffset = rand() * (isMale ? 1 : -1) * .6
 
   // if (index == 47) name = 'Mia'
   // if (index == 82) name = 'Mason'
 
 
-  var compGPA0 = lerp(hsGPAadjusted, collegeGPA, rand()*.7) + maleOffset
-  var compGPA1 = lerp(compGPA0, collegeGPA + maleOffset, rand()*1.1)
-  var compGPA2 = compGPA1 + rand()/4 - 1/4/2
+  var compGPA0 = lerp(hsGPAadjusted, collegeGPA, rand() * .7) + maleOffset
+  var compGPA1 = lerp(compGPA0, collegeGPA + maleOffset, rand() * 1.1)
+  var compGPA2 = compGPA1 + rand() / 4 - 1 / 4 / 2
   // var compGPA0 = collegeGPA + d3.randomNormal.source(seed)(0, .5)()
   // var compGPA1 = collegeGPA + d3.randomNormal.source(seed)(0, .3)()
 
-  if (index == 69){
+  if (index == 69) {
     compGPA1 = 2.0
   }
-  if (index == 37){
+  if (index == 37) {
     compGPA1 = 2.0
   }
 
 
   var isLowIncome = rand() < .5
 
-  var inteviewGPA = collegeGPA + d3.randomNormal.source(seed)(0, .15)() 
-  var inteviewGPAbias = inteviewGPA + rand()*(isLowIncome ? -1 : 1)*.5
+  var inteviewGPA = collegeGPA + d3.randomNormal.source(seed)(0, .15)()
+  var inteviewGPAbias = inteviewGPA + rand() * (isLowIncome ? -1 : 1) * .5
 
   // if (index == 115) name = 'Mason'
   // if (index == 32) name = 'Mia'
@@ -107,13 +117,30 @@ var students = d3.range(150).map((d, index) => {
   if (name == 'Camila') name = 'Mia'
 
 
-  return {name, index, lastName, collegeGPA, hsGPA, hsGPAadjusted, compGPA0, compGPA1, compGPA2, isMale, isLowIncome, inteviewGPA, inteviewGPAbias}
+  return {
+    name,
+    index,
+    lastName,
+    collegeGPA,
+    hsGPA,
+    hsGPAadjusted,
+    compGPA0,
+    compGPA1,
+    compGPA2,
+    isMale,
+    isLowIncome,
+    inteviewGPA,
+    inteviewGPAbias
+  }
 })
 
 students = _.sortBy(students, d => d.collegeGPA)
 
 students = students.filter(d => {
-  return d3.entries(d).every(({key, value}) => {
+  return d3.entries(d).every(({
+    key,
+    value
+  }) => {
     if (!key.includes('GPA')) return true
 
     return 1 < value && value < 4.0
@@ -129,59 +156,71 @@ c.svg.append('path')
     strokeDasharray: '4 2'
   })
 
-!(function(){
-  // return window.annotationSel = d3.select(null)
-  var isDrag = 0
-  if (!isDrag) annotations.forEach(d => d.text = d.html ? '' : d.text)
-  if (isDrag){
-    d3.select('#sections').st({pointerEvents: 'none'})
-  }
+  !(function () {
+    // return window.annotationSel = d3.select(null)
+    var isDrag = 0
+    if (!isDrag) annotations.forEach(d => d.text = d.html ? '' : d.text)
+    if (isDrag) {
+      d3.select('#sections').st({
+        pointerEvents: 'none'
+      })
+    }
 
-  // copy('window.annotations = ' + JSON.stringify(annotations, null, 2))
-  var swoopy = d3.swoopyDrag()
-    .x(d => c.x(d.x))
-    .y(d => c.y(d.y))
-    .draggable(isDrag)
-    .annotations(annotations)
-    .on('drag', d => {
+    // copy('window.annotations = ' + JSON.stringify(annotations, null, 2))
+    var swoopy = d3.swoopyDrag()
+      .x(d => c.x(d.x))
+      .y(d => c.y(d.y))
+      .draggable(isDrag)
+      .annotations(annotations)
+      .on('drag', d => {
 
-    })
-
-
-  var htmlAnnoSel = divSel.appendMany('div.annotation', annotations.filter(d => d.html))
-    .translate(d => [c.x(d.x), c.y(d.y)]).st({position: 'absolute', opacity: 0})
-    .append('div')
-    .translate(d => d.textOffset)
-    .html(d => d.html)
-    .st({width: 150})
+      })
 
 
+    var htmlAnnoSel = divSel.appendMany('div.annotation', annotations.filter(d => d.html))
+      .translate(d => [c.x(d.x), c.y(d.y)]).st({
+        position: 'absolute',
+        opacity: 0
+      })
+      .append('div')
+      .translate(d => d.textOffset)
+      .html(d => d.html)
+      .st({
+        width: 150
+      })
 
-  var swoopySel = c.svg.append('g.annotations').call(swoopy)
 
-  c.svg.append('marker')
+
+    var swoopySel = c.svg.append('g.annotations').call(swoopy)
+
+    c.svg.append('marker')
       .attr('id', 'arrow')
       .attr('viewBox', '-10 -10 20 20')
       .attr('markerWidth', 20)
       .attr('markerHeight', 20)
       .attr('orient', 'auto')
-    .append('path')
+      .append('path')
       .attr('d', 'M-6.75,-6.75 L 0,0 L -6.75,6.75')
 
-  swoopySel.selectAll('path')
-    .attr('marker-end', 'url(#arrow)')
-    .st({'opacity': d => d.path == 'M 0 0' ? 0 : 1})
-  window.annotationSel = swoopySel.selectAll('g')
-    .st({fontSize: 12, opacity: d => d.slide == 0 ? 1 : 0})
+    swoopySel.selectAll('path')
+      .attr('marker-end', 'url(#arrow)')
+      .st({
+        'opacity': d => d.path == 'M 0 0' ? 0 : 1
+      })
+    window.annotationSel = swoopySel.selectAll('g')
+      .st({
+        fontSize: 12,
+        opacity: d => d.slide == 0 ? 1 : 0
+      })
 
-  window.annotationSel = d3.selectAll('g.annotations g, div.annotation')
+    window.annotationSel = d3.selectAll('g.annotations g, div.annotation')
 
-  swoopySel.selectAll('text')
-    .each(function(d){
-      d3.select(this)
-        .text('')                        //clear existing text
-        .tspans(d3.wordwrap(d.text, d.width || 20), 13) //wrap after 20 char
-    })  
+    swoopySel.selectAll('text')
+      .each(function (d) {
+        d3.select(this)
+          .text('') //clear existing text
+          .tspans(d3.wordwrap(d.text, d.width || 20), 13) //wrap after 20 char
+      })
   })()
 
 
@@ -206,11 +245,11 @@ var circleSel = c.svg.appendMany('g', students)
     var html = ''
     html += `<div><b>${d.name} ${d.lastName}</b></div>`
 
-    if (curSlide.circleFill == 'gender'){
+    if (curSlide.circleFill == 'gender') {
       html += `<span style='background: ${colors[d.isMale ? 'm' : 'f']}'>${d.isMale ? 'Male' : 'Female'}</span>`
     }
 
-    if (curSlide.circleFill == 'income'){
+    if (curSlide.circleFill == 'income') {
       html += `<span style='background: ${colors[d.isLowIncome ? 'l' : 'h']}'>${d.isLowIncome ? 'Low Income' : 'High Income'}</span>`
     }
     html += `
@@ -237,26 +276,35 @@ var innerCircleSel = circleSel.append('circle')
 c.svg.select('.y').selectAll('line').filter(d => d == 4)
   .remove()
 c.svg.select('.y').selectAll('text').filter(d => d == 4)
-  .select(function() {
+  .select(function () {
     return this.parentNode.insertBefore(this.cloneNode(1), this.nextSibling);
   })
-  .text('Actual College GPA')
-  .at({x: c.width/2, y: c.height + 35, textAnchor: 'middle', fontWeight: 800})
+  .text('実際の大学でのGPA')
+  .at({
+    x: c.width / 2,
+    y: c.height + 35,
+    textAnchor: 'middle',
+    fontWeight: 800
+  })
 
-var yLabelSel = divSel.st({pointerEvents: 'none'}).append('div.axis')
-  .html('<b>High School GPA</b>')
+var yLabelSel = divSel.st({
+    pointerEvents: 'none'
+  }).append('div.axis')
+  .html('<b>高校のGPA</b>')
   .translate([0, -9])
-  .st({textAlign: 'left', maxWidth: 260})
+  .st({
+    textAlign: 'left',
+    maxWidth: 260
+  })
 
 // c.svg.append('text').text('Actual College GPA').st({fontWeight: 800})
 
-var longLabel = 'high school GPA, essay, clubs, zip code, teacher recommendations, sports, AP scores, demonstrated interest, gender, SAT scores, interviews, portfolio, race, work experience'
+var longLabel = '高校のGPA、エッセイ、クラブ活動、郵便番号、先生の評価、スポーツ、AP点数、関心を示したもの、性別、SAT点数、インタビュー、ポートフォリオ、人種、職務経験'
 
-var slides = [
-  {
+var slides = [{
     yKey: 'hsGPA',
     isLineVisible: 0,
-    yLabel: '<b>High School GPA</b>',
+    yLabel: '<b>高校時のGPA</b>',
     circleFill: 'grey',
     circleFillDelay: d => 0,
   },
@@ -264,22 +312,22 @@ var slides = [
   {
     yKey: 'hsGPA',
     isLineVisible: true,
-    yLabel: '<b>High School GPA</b>'
+    yLabel: '<b>高校時のGPA</b>'
   },
 
   {
     yKey: 'hsGPAadjusted',
-    yLabel: 'high school GPA'
+    yLabel: '高校時のGPA'
   },
 
   {
     yKey: 'compGPA0',
-    yLabel: 'high school GPA, essay, clubs, zip code'.replace('essay', '<span class="highlight blue">essay') + '</span>'
+    yLabel: '高校時のGPA、エッセイ、クラブ活動、郵便番号'.replace('エッセイ', '<span class="highlight blue">エッセイ') + '</span>'
   },
 
   {
     yKey: 'compGPA1',
-    yLabel: longLabel.replace('teacher', '<span class="highlight blue">teacher') + '</span>',
+    yLabel: longLabel.replace('先生', '<span class="highlight blue">先生') + '</span>',
     circleFill: 'grey',
     circleFillDelay: d => 0,
     textFill: '#eee',
@@ -289,7 +337,7 @@ var slides = [
     yKey: 'compGPA1',
     yLabel: longLabel,
     circleFill: 'gender',
-    circleFillDelay: (d, i) => i*20 + (d.isMale ? 0 : 2000),
+    circleFillDelay: (d, i) => i * 20 + (d.isMale ? 0 : 2000),
     textFill: '#000',
   },
 
@@ -304,7 +352,7 @@ var slides = [
 
   {
     textFill: '#eee',
-    yLabel: 'Alumni interview',
+    yLabel: '同窓生インタビュー',
     yKey: 'inteviewGPAbias',
     circleFill: 'grey',
     text2Opacity: 0,
@@ -312,23 +360,23 @@ var slides = [
 
   {
     textFill: '#eee',
-    yLabel: 'Alumni interview',
+    yLabel: '同窓生インタビュー',
     yKey: 'inteviewGPAbias',
     circleFill: 'income',
-    circleFillDelay: (d, i) => i*20 + (!d.isLowIncome ? 2000 : 0),
+    circleFillDelay: (d, i) => i * 20 + (!d.isLowIncome ? 2000 : 0),
     text2Opacity: 1,
   },
 
   {
     textFill: '#eee',
-    yLabel: 'Alumni interview, household income'.replace('household', '<span class="highlight blue">household') + '</span>',
+    yLabel: '同窓生インタビュー, 世帯年収'.replace('世帯年収', '<span class="highlight blue">世帯年収') + '</span>',
     yKey: 'inteviewGPA',
     text2Opacity: 1,
   },
 ]
 
 slides.forEach(d => {
-  if (d.name == 'proxyHighlight'){
+  if (d.name == 'proxyHighlight') {
     var proxies = 'clubs, interviews, portfolio, sports'.split(', ')
     d.yLabel = d.yLabel
       .split(', ')
@@ -342,7 +390,7 @@ slides.forEach(d => {
   }
 
 
-  if (d.yLabel[0] != '<') d.yLabel = '<b>Predicted College GPA</b> using ' + d.yLabel.replace('School', 'school')
+  if (d.yLabel[0] != '<') d.yLabel = '<b>予測した大学でのGPA</b> 利用データ: ' + d.yLabel.replace('School', 'school')
 })
 
 var keys = []
@@ -350,11 +398,11 @@ slides.forEach(d => keys = keys.concat(d3.keys(d)))
 _.uniq(keys).forEach(str => {
   var prev = null
   slides.forEach(d => {
-    if (typeof(d[str]) === 'undefined'){
+    if (typeof (d[str]) === 'undefined') {
       d[str] = prev
     }
     prev = d[str]
-  }) 
+  })
 })
 
 slides.forEach((d, i) => {
@@ -362,7 +410,7 @@ slides.forEach((d, i) => {
     grey: d => '#eee',
     gender: d => d.isMale ? colors.m : colors.f,
     income: d => d.isLowIncome ? colors.l : colors.h,
-  }[d.circleFill]
+  } [d.circleFill]
 
   d.index = i
 })
@@ -380,17 +428,20 @@ var gs = d3.graphScroll()
 
 
 var prevSlide = -1
-function updateSlide(i){
+
+function updateSlide(i) {
   var slide = slides[i]
   if (!slide) return
   curSlide = slide
-  var {yKey} = slide
+  var {
+    yKey
+  } = slide
 
   lineSel.transition('yKey').duration(500)
     .at({
       d: d => [
-        'M 5 0', 
-        'C 0 0',  
+        'M 5 0',
+        'C 0 0',
         0, c.y(d['collegeGPA']) - c.y(d[yKey]),
         0, c.y(d['collegeGPA']) - c.y(d[yKey]),
         'S 0 0 -5.5 0'
@@ -399,18 +450,20 @@ function updateSlide(i){
     .translate(d => [c.x(d.collegeGPA), c.y(d[yKey])])
 
 
-  circleSel.transition('yKey').duration(500)      
+  circleSel.transition('yKey').duration(500)
     .translate(d => [c.x(d.collegeGPA), c.y(d[yKey])])
 
   innerCircleSel.transition('colorFill').duration(30)
     .delay(slide.circleFillDelay)
     .at({
-      fill: slide.circleFillFn, 
+      fill: slide.circleFillFn,
       stroke: d => d3.color(slide.circleFillFn(d)).darker(1.5)
     })
 
   axis2Sel.transition()
-    .st({opacity: i == 5 ? 1 : 0})
+    .st({
+      opacity: i == 5 ? 1 : 0
+    })
 
   lineSel.transition('opacity').duration(500)
     .st({
@@ -421,7 +474,9 @@ function updateSlide(i){
 
 
   annotationSel.transition()
-    .st({opacity: d => i == d.slide ? 1 : 0})
+    .st({
+      opacity: d => i == d.slide ? 1 : 0
+    })
 
 
 
@@ -433,7 +488,7 @@ slide = slides[0]
 
 
 
-d3.selectAll('.circle').each(function(){
+d3.selectAll('.circle').each(function () {
   var d = d3.select(this).attr('class').split(' ')[0]
 
   d3.select(this)
@@ -442,13 +497,15 @@ d3.selectAll('.circle').each(function(){
       borderColor: d3.color(colors[d]).darker(1.5),
     })
 
-  
+
 })
 
 
 
 
-function lerp(a, b, t){ return a + t*(b - a) }
+function lerp(a, b, t) {
+  return a + t * (b - a)
+}
 
 
 
@@ -457,11 +514,3 @@ c.svg.selectAll('g.annotations').raise()
 
 
 d3.selectAll('#sections img').attr('aria-hidden', true)
-
-
-
-
-
-
-
-
